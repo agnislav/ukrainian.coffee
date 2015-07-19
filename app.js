@@ -10,32 +10,32 @@ angular
     {
       type: 'roaster',
       name: 'CafeBoutique',
-      town: 'Киев',
+      town: 'РљРёРµРІ',
       description: ''
     }, {
       type: 'roaster',
-      name: 'Фунт кофе',
-      town: 'Харьков',
+      name: 'Р¤СѓРЅС‚ РєРѕС„Рµ',
+      town: 'РҐР°СЂСЊРєРѕРІ',
       description: ''
     }, {
       type: 'roaster',
-      name: 'Мэделин',
-      town: 'Ужгород',
+      name: 'РњСЌРґРµР»РёРЅ',
+      town: 'РЈР¶РіРѕСЂРѕРґ',
       description: ''
     }, {
       type: 'roaster',
-      name: 'Тико-Чако',
-      town: 'Каменец-Подольский',
+      name: 'РўРёРєРѕ-Р§Р°РєРѕ',
+      town: 'РљР°РјРµРЅРµС†-РџРѕРґРѕР»СЊСЃРєРёР№',
       description: ''
     }, {
       type: 'point',
       name: 'Bimbo',
-      town: 'Киев',
+      town: 'РљРёРµРІ',
       description: ''
     }, {
       type: 'point',
       name: '9bar',
-      town: 'Киев',
+      town: 'РљРёРµРІ',
       description: ''
     }
   ])
