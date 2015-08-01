@@ -22,44 +22,14 @@ var gulp = require('gulp'),
     //livereload = require('gulp-livereload'),
     //lazypipe = require('lazypipe');
 
-gulp.task('build', ['index.html', 'styles', 'scripts', 'vendor-scripts', 'images', 'templates'], function () {
+
+gulp.task('dist', ['index.html', 'styles', 'scripts', 'vendor-scripts', 'images', 'templates'], function () {
   // todo: put a notification here.
 });
 
-gulp.task('scripts', ['clean'], function () {
-  return gulp.src(['public/components/_global/app.js', 'public/components/**/*.js', '!public/components/**/*Spec.js'])
-    // todo [#6]: implement
-    //.pipe(addStream.obj(prepareTemplates()))
-    .pipe(concat('app.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('dist'));
-});
-
-gulp.task('vendor-scripts', ['clean'], function () {
-  return gulp.src([
-      'public/_vendor/angular/angular.min.js',
-      'public/_vendor/angular-route/angular-route.min.js',
-      'public/_vendor/angular-sanitize/angular-sanitize.min.js',
-      'public/_vendor/ngmap/build/scripts/ng-map.min.js'
-    ])
-    .pipe(concat('vendor.min.js'))
-    .pipe(gulp.dest('dist'));
-});
-
-gulp.task('styles', ['clean'], function () {
-  return sass('public/components/', { style: 'expanded' })
-    .pipe(autoprefixer('last 2 version'))
-    .pipe(concat('styles.min.css'))
-    .pipe(minifycss())
-    .pipe(gulp.dest('dist'));
-});
-
-gulp.task('index.html', ['clean'], function () {
-  //var YOUR_LOCALS = {};
-
+gulp.task('index.html', ['clean-dist'], function () {
   gulp.src('./views/index.jade')
     .pipe(jade({
-      //locals: YOUR_LOCALS
       pretty: true
     }))
     .pipe(htmlreplace({
@@ -70,13 +40,41 @@ gulp.task('index.html', ['clean'], function () {
     .pipe(gulp.dest('./dist/'))
 });
 
-gulp.task('images', ['clean'], function () {
+gulp.task('styles', ['clean-dist'], function () {
+  return sass('public/components/', { style: 'expanded' })
+    .pipe(autoprefixer('last 2 version'))
+    .pipe(concat('styles.min.css'))
+    .pipe(minifycss())
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('scripts', ['clean-dist'], function () {
+  return gulp.src(['public/components/_global/app.js', 'public/components/**/*.js', '!public/components/**/*Spec.js'])
+    // todo [#6]: implement
+    //.pipe(addStream.obj(prepareTemplates()))
+    .pipe(concat('app.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('vendor-scripts', ['clean-dist'], function () {
+  return gulp.src([
+      'public/_vendor/angular/angular.min.js',
+      'public/_vendor/angular-route/angular-route.min.js',
+      'public/_vendor/angular-sanitize/angular-sanitize.min.js',
+      'public/_vendor/ngmap/build/scripts/ng-map.min.js'
+    ])
+    .pipe(concat('vendor.min.js'))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('images', ['clean-dist'], function () {
   return gulp.src('public/images/**/*')
     //.pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
     .pipe(gulp.dest('dist/images'));
 });
 
-gulp.task('templates', ['clean'], function () {
+gulp.task('templates', ['clean-dist'], function () {
   var grid = gulp.src('public/components/grid/grid.html')
     .pipe(gulp.dest('dist/components/grid'));
 
@@ -89,7 +87,7 @@ gulp.task('templates', ['clean'], function () {
   return es.merge(grid, item, map);
 });
 
-gulp.task('clean', function (cb) {
+gulp.task('clean-dist', function (cb) {
   del(['dist/*'], cb)
 });
 
