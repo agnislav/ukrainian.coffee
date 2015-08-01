@@ -4,7 +4,7 @@
 'use strict';
 
 angular
-  .module('uc', ['ngRoute', 'ngSanitize', 'ngMap'])
+  .module('uc', ['ngRoute', 'ngSanitize', 'ngMap', 'templates'])
 
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
@@ -20,3 +20,6 @@ angular
 
     $locationProvider.html5Mode({enabled: true, requireBase: false});
   }]);
+
+// needed for templateCache
+angular.module('templates', []);

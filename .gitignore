@@ -23,5 +23,7 @@
 # Mongo Explorer plugin:
 # .idea/mongoSettings.xml
 
-public/styles/styles.css.map
 node_modules
+dist
+.sass-cache
+*.map

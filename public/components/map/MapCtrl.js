@@ -16,7 +16,7 @@ angular.module('uc')
 
     $scope.$on('mapInitialized', function(event, evtMap) {
       var pointIds = Object.keys(points);
-      map        = evtMap;
+      window.map = evtMap;
       $scope.map = map;
       for (var i = 0, l = pointIds.length; i < l; i++) {
         var pointId = pointIds[i];
