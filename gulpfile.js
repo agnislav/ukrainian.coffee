@@ -8,59 +8,53 @@ var gulp = require('gulp'),
     autoprefixer = require('gulp-autoprefixer'),
     minifycss = require('gulp-minify-css'),
     uglify = require('gulp-uglify'),
-    imagemin = require('gulp-imagemin'),
-    //rename = require('gulp-rename'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
-    //cache = require('gulp-cache'),
-    //livereload = require('gulp-livereload'),
     del = require('del'),
     jade = require('gulp-jade'),
     htmlreplace = require('gulp-html-replace'),
     angularTemplateCache = require('gulp-angular-templatecache'),
-    addStream = require('add-stream');
+    es = require('event-stream');
+    //addStream = require('add-stream'),
+    //imagemin = require('gulp-imagemin'),
+    //rename = require('gulp-rename'),
+    //cache = require('gulp-cache'),
+    //livereload = require('gulp-livereload'),
+    //lazypipe = require('lazypipe');
 
-gulp.task('default', ['clean'], function () {
-  gulp.start('index.html', 'styles', 'vendor-styles', 'scripts', 'vendor-scripts', 'images', 'templates')
-    .pipe(notify({ message: 'Build complete' }));
+gulp.task('build', ['index.html', 'styles', 'scripts', 'vendor-scripts', 'images', 'templates'], function () {
+  // todo: put a notification here.
 });
 
-gulp.task('scripts', function () {
-  return gulp.src(['public/app.js', 'public/components/**/*.js', '!public/components/**/*Spec.js'])
+gulp.task('scripts', ['clean'], function () {
+  return gulp.src(['public/components/_global/app.js', 'public/components/**/*.js', '!public/components/**/*Spec.js'])
+    // todo [#6]: implement
     //.pipe(addStream.obj(prepareTemplates()))
     .pipe(concat('app.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('vendor-scripts', function () {
+gulp.task('vendor-scripts', ['clean'], function () {
   return gulp.src([
-      'public/__vendor/angular.min.js',
-      'public/__vendor/angular-route.min.js',
-      'public/__vendor/angular-sanitize.min.js',
-      'public/__vendor/ng-map.min.js'
+      'public/_vendor/angular/angular.min.js',
+      'public/_vendor/angular-route/angular-route.min.js',
+      'public/_vendor/angular-sanitize/angular-sanitize.min.js',
+      'public/_vendor/ngmap/build/scripts/ng-map.min.js'
     ])
     .pipe(concat('vendor.min.js'))
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('styles', function () {
-  return sass('public/', { style: 'expanded' })
+gulp.task('styles', ['clean'], function () {
+  return sass('public/components/', { style: 'expanded' })
     .pipe(autoprefixer('last 2 version'))
     .pipe(concat('styles.min.css'))
     .pipe(minifycss())
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('vendor-styles', function () {
-  return gulp.src('public/__vendor/normalize.css')
-    .pipe(minifycss())
-    .pipe(addStream.obj(gulp.src('public/__vendor/foundation.min.css')))
-    .pipe(concat('vendor_styles.min.css'))
-    .pipe(gulp.dest('dist'));
-});
-
-gulp.task('index.html', function () {
+gulp.task('index.html', ['clean'], function () {
   //var YOUR_LOCALS = {};
 
   gulp.src('./views/index.jade')
@@ -70,32 +64,33 @@ gulp.task('index.html', function () {
     }))
     .pipe(htmlreplace({
       styles: 'styles.min.css',
-      vendorstyles: 'vendor_styles.min.css',
       scripts: 'app.min.js',
       vendorscripts: 'vendor.min.js'
     }))
     .pipe(gulp.dest('./dist/'))
 });
 
-gulp.task('images', function () {
+gulp.task('images', ['clean'], function () {
   return gulp.src('public/images/**/*')
-    .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
+    //.pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
     .pipe(gulp.dest('dist/images'));
 });
 
-gulp.task('templates', function () {
-  gulp.src('public/components/grid/grid.html')
+gulp.task('templates', ['clean'], function () {
+  var grid = gulp.src('public/components/grid/grid.html')
     .pipe(gulp.dest('dist/components/grid'));
 
-  gulp.src('public/components/grid//item/item.html')
+  var item = gulp.src('public/components/grid/item/item.html')
     .pipe(gulp.dest('dist/components/grid/item'));
 
-  gulp.src('public/components/map/map.html')
+  var map = gulp.src('public/components/map/map.html')
     .pipe(gulp.dest('dist/components/map'));
+
+  return es.merge(grid, item, map);
 });
 
 gulp.task('clean', function (cb) {
-  del(['dist/assets', 'dist/*'], cb)
+  del(['dist/*'], cb)
 });
 
 /**

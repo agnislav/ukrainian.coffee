@@ -27,3 +27,6 @@ node_modules
 dist
 .sass-cache
 *.map
+
+public/_vendor
+public/components/**/*.css
