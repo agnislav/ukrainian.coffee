@@ -14,49 +14,75 @@ var gulp = require('gulp'),
     del = require('del'),
     jade = require('gulp-jade'),
     htmlreplace = require('gulp-html-replace'),
-    angularTemplateCache = require('gulp-angular-templatecache'),
     sourcemaps = require('gulp-sourcemaps'),
+    changed = require('gulp-changed'),
     es = require('event-stream');
+//angularTemplateCache = require('gulp-angular-templatecache'),
     //addStream = require('add-stream'),
     //imagemin = require('gulp-imagemin'),
     //rename = require('gulp-rename'),
     //cache = require('gulp-cache'),
     //livereload = require('gulp-livereload'),
-    //lazypipe = require('lazypipe');
+    //lazypipe = require('lazypipe'),
 
-gulp.task('watch', function () {
+var paths = {
+  src: {
+    index: 'views/index.jade',
+    components: 'public/components',
+    styles: 'public/components/**/*.scss',
+    js: ['public/components/**/*.js', '!public/components/**/*Spec.js'],
+    templates: 'public/components/**/*.html',
+    images: 'public/images/**/*'
+  },
+  app: {
+    root: 'app/',
+    components: 'app/components',
+    images: 'app/images',
+    vendor: 'app/_vendor'
+  },
+  dist: {}
+};
+
+var isWatching = false;
+
+/**
+ * TASK: WATCH
+ */
+gulp.task('watch', ['build'], function () {
+  isWatching = true;
+
+  gulp.watch(paths.src.index, ['build-index']);
+  gulp.watch(paths.src.js, ['build-scripts']);
+  gulp.watch(paths.src.styles, ['build-styles']);
+  gulp.watch(paths.src.templates, ['build-templates']);
+  gulp.watch(paths.src.images, ['build-images']);
 
 });
 
 /**
  * TASK: BUILD
  */
-gulp.task('build', ['build-index.html', 'build-styles', 'build-scripts', 'build-vendor-scripts', 'build-images', 'build-templates'], function () {
+gulp.task('build', ['build-index', 'build-styles', 'build-scripts', 'build-vendor-scripts', 'build-images', 'build-templates'], function () {
   // todo: put a notification here.
 });
 
-gulp.task('build-index.html', ['clean-app'], function () {
-  gulp.src('./views/index.jade')
-    .pipe(jade({
-      pretty: true
-    }))
-    .pipe(gulp.dest('./app/'))
+gulp.task('build-index', ['clean-app'], function () {
+  gulp.src(paths.src.index)
+    .pipe(jade({ pretty: true}))
+    .pipe(gulp.dest(paths.app.root))
 });
 
 gulp.task('build-styles', ['clean-app'], function () {
-  return sass('public/components/', { style: 'expanded' , sourcemap: true})
+  //noinspection JSUnresolvedFunction
+  return sass(paths.src.components, { style: 'expanded' , sourcemap: true})
     .pipe(autoprefixer('last 2 version'))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest('app/components'));
+    .pipe(gulp.dest(paths.app.components));
 });
 
 gulp.task('build-scripts', ['clean-app'], function () {
-  return gulp.src(['public/components/**/*.js', '!public/components/**/*Spec.js'])
-    // todo [#6]: implement
-    //.pipe(addStream.obj(prepareTemplates()))
-    //.pipe(concat('app.min.js'))
-    //.pipe(uglify())
-    .pipe(gulp.dest('app/components'));
+  return gulp.src(paths.src.js)
+    .pipe(gulp.dest(paths.app.components));
 });
 
 gulp.task('build-vendor-scripts', ['clean-app'], function () {
@@ -67,22 +93,24 @@ gulp.task('build-vendor-scripts', ['clean-app'], function () {
     'public/_vendor/ngmap/build/scripts/ng-map.js'
   ])
     //.pipe(concat('vendor.min.js'))
-    .pipe(gulp.dest('app/_vendor'));
+    .pipe(gulp.dest(paths.app.vendor));
 });
 
-// todo: remove this?
 gulp.task('build-images', ['clean-app'], function () {
-  return gulp.src('public/images/**/*')
-    .pipe(gulp.dest('app/images'));
+  return gulp.src(paths.src.images)
+    .pipe(gulp.dest(paths.app.images));
 });
 
 gulp.task('build-templates', ['clean-app'], function () {
-  return gulp.src('public/components/**/*.html')
-    .pipe(gulp.dest('app/components'));
+  return gulp.src(paths.src.templates)
+    .pipe(gulp.dest(paths.app.components));
 });
 
 gulp.task('clean-app', function (cb) {
-  del(['app/*'], cb)
+  if (!isWatching) {
+    del(['app/*'], cb)
+  }
+  else cb();
 });
 
 
@@ -108,6 +136,7 @@ gulp.task('dist-index.html', ['clean-dist'], function () {
 });
 
 gulp.task('dist-styles', ['clean-dist'], function () {
+  //noinspection JSUnresolvedFunction
   return sass('public/components/', { style: 'expanded' })
     .pipe(autoprefixer('last 2 version'))
     .pipe(concat('styles.min.css'))
@@ -154,8 +183,8 @@ gulp.task('clean-dist', function (cb) {
 /**
  HELPERS
  */
-function prepareTemplates () {
-  return gulp.src('public/**/*.html')
+/*function prepareTemplates () {
+  return gulp.src('public/!**!/!*.html')
     //.pipe(minify and preprocess the template html here)
     .pipe(angularTemplateCache());
-}
+}*/
