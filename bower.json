@@ -1,0 +1,23 @@
+{
+  "name": "ukrainian.coffee",
+  "version": "0.1.1",
+  "homepage": "https://github.com/agnislav/ukrainian.coffee",
+  "authors": [
+    "Agnislav Onufrijchuk <agnislav@gmail.com>",
+    "Anastasia Chevhuz <anastacia.chevguz@gmail.com>"
+  ],
+  "license": "JSON",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "public/_vendor/",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-route": "1.4",
+    "angular": "1.4",
+    "angular-sanitize": "1.4",
+    "foundation": "~5.4.7",
+    "ngmap": "~1.10.0"
+  }
+}
