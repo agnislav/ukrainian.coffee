@@ -15,15 +15,11 @@ var gulp = require('gulp'),
     jade = require('gulp-jade'),
     htmlreplace = require('gulp-html-replace'),
     sourcemaps = require('gulp-sourcemaps'),
-    changed = require('gulp-changed'),
-    es = require('event-stream');
-//angularTemplateCache = require('gulp-angular-templatecache'),
-    //addStream = require('add-stream'),
-    //imagemin = require('gulp-imagemin'),
+    changed = require('gulp-changed');
+    //es = require('event-stream');
+    //angularTemplateCache = require('gulp-angular-templatecache'),
     //rename = require('gulp-rename'),
-    //cache = require('gulp-cache'),
     //livereload = require('gulp-livereload'),
-    //lazypipe = require('lazypipe'),
 
 var paths = {
   src: {
@@ -73,8 +69,10 @@ gulp.task('build-index', ['clean-app'], function () {
 });
 
 gulp.task('build-styles', ['clean-app'], function () {
-  //noinspection JSUnresolvedFunction
   return sass(paths.src.components, { style: 'expanded' , sourcemap: true})
+    .on('error', function (err) {
+      console.error('Error!', err.message);
+    })
     .pipe(autoprefixer('last 2 version'))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(paths.app.components));
