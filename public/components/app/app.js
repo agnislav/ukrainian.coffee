@@ -6,7 +6,7 @@
 angular
   .module('uc', ['ngRoute', 'ngSanitize', 'ngMap', 'templates'])
 
-  .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+  .config(['$routeProvider', '$locationProvider', '$compileProvider', 'config', function ($routeProvider, $locationProvider, $compileProvider, config) {
 
     $routeProvider
       .when('/', {templateUrl: '/components/coffeepoints/coffeepoints.html', controller: 'CoffeePointsCtrl'})
@@ -19,6 +19,8 @@ angular
       .otherwise({redirectTo: '/ukrainian.coffee'});
 
     $locationProvider.html5Mode({enabled: true, requireBase: false});
+
+    $compileProvider.debugInfoEnabled(config.debug);
   }]);
 
 // needed for templateCache

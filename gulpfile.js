@@ -15,7 +15,9 @@ var gulp = require('gulp'),
     jade = require('gulp-jade'),
     htmlreplace = require('gulp-html-replace'),
     sourcemaps = require('gulp-sourcemaps'),
-    changed = require('gulp-changed');
+    changed = require('gulp-changed'),
+    gulpNgConfig = require('gulp-ng-config'),
+    addStream = require('add-stream');
     //es = require('event-stream');
     //angularTemplateCache = require('gulp-angular-templatecache'),
     //rename = require('gulp-rename'),
@@ -27,12 +29,14 @@ var paths = {
     index: 'views/index.jade',
     components: 'public/components',
     styles: 'public/components/**/*.scss',
-    js: ['public/components/**/*.js', '!public/components/**/*Spec.js'],
+    appjs: 'public/components/app/app.js',
+    js: ['public/components/**/*.js', '!public/components/**/*Spec.js', '!public/components/app/app.js'],
     templates: 'public/components/**/*.html',
     images: 'public/images/**/*'
   },
   app: {
     root: 'app/',
+    appjs: 'app/app.js',
     components: 'app/components',
     images: 'app/images',
     vendor: 'app/_vendor'
@@ -59,7 +63,7 @@ gulp.task('watch', ['build'], function () {
 /**
  * TASK: BUILD
  */
-gulp.task('build', ['build-index', 'build-styles', 'build-scripts', 'build-vendor-scripts', 'build-images', 'build-templates'], function () {
+gulp.task('build', ['build-index', 'build-styles', 'build-appjs', 'build-scripts', 'build-vendor-scripts', 'build-images', 'build-templates'], function () {
   // todo: put a notification here.
 });
 
@@ -76,6 +80,13 @@ gulp.task('build-styles', ['clean-app'], function () {
     })
     .pipe(autoprefixer('last 2 version'))
     .pipe(sourcemaps.write())
+    .pipe(gulp.dest(paths.app.components));
+});
+
+gulp.task('build-appjs', ['clean-app'], function () {
+  return gulp.src(paths.src.appjs)
+    .pipe(addStream.obj(generateConfig('development')))
+    .pipe(concat(paths.app.appjs))
     .pipe(gulp.dest(paths.app.components));
 });
 
@@ -144,9 +155,11 @@ gulp.task('dist-styles', ['clean-dist'], function () {
 });
 
 gulp.task('dist-scripts', ['clean-dist'], function () {
-  return gulp.src(['public/components/**/*.js', '!public/components/**/*Spec.js'])
+  return gulp.src('public/components/app/app.js')
+    .pipe(addStream.obj(generateConfig('production')))
     // todo [#6]: implement
     //.pipe(addStream.obj(prepareTemplates()))
+    .pipe(addStream.obj(gulp.src(['public/components/**/*.js', '!public/components/**/*Spec.js', '!public/components/app/app.js'])))
     .pipe(concat('app.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
@@ -165,7 +178,6 @@ gulp.task('dist-vendor-scripts', ['clean-dist'], function () {
 
 gulp.task('dist-images', ['clean-dist'], function () {
   return gulp.src('public/images/**/*')
-    //.pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
     .pipe(gulp.dest('dist/images'));
 });
 
@@ -187,3 +199,16 @@ gulp.task('clean-dist', function (cb) {
     //.pipe(minify and preprocess the template html here)
     .pipe(angularTemplateCache());
 }*/
+
+/**
+ *
+ * @param {'production'|'development'} env
+ * @returns ReadableStream
+ */
+function generateConfig (env) {
+  return gulp.src('./configuration/client.json')
+    .pipe(gulpNgConfig('uc', {
+      environment: env,
+      createModule: false
+    }));
+}

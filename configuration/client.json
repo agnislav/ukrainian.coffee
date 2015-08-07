@@ -1,0 +1,12 @@
+{
+  "development": {
+    "config": {
+      "debug": true
+    }
+  },
+  "production": {
+    "config": {
+      "debug": false
+    }
+  }
+}
