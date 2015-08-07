@@ -27,6 +27,7 @@ var gulp = require('gulp'),
 
 var paths = {
   src: {
+    views: 'views/*',
     index: 'views/index.jade',
     components: 'public/components',
     styles: 'public/components/**/*.scss',
@@ -51,7 +52,7 @@ var isWatching = false;
 gulp.task('watch', ['build'], function () {
   isWatching = true;
 
-  gulp.watch(paths.src.index, ['build-index']);
+  gulp.watch(paths.src.views, ['build-index']);
   gulp.watch(paths.src.js, ['build-scripts']);
   gulp.watch(paths.src.styles, ['build-styles']);
   gulp.watch(paths.src.templates, ['build-templates']);

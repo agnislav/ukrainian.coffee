@@ -9,7 +9,7 @@ angular
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
     $routeProvider
-      .when('/', {templateUrl: '/components/grid/grid.html', controller: 'GridCtrl'})
+      .when('/', {templateUrl: '/components/coffeepoints/coffeepoints.html', controller: 'CoffeePointsCtrl'})
       //.when('/beans', {templateUrl: '/components/grid/grid.html', controller: 'GridCtrl', resolve: {type: 'bean'}})
       //.when('/roasters', {templateUrl: '/components/grid/grid.html', controller: 'GridCtrl', resolve: {type: 'roaster'}})
       //.when('/roasters/:id', {templateUrl: 'roaster.html', controller: 'RoasterCtrl'})
