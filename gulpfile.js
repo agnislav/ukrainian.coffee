@@ -17,9 +17,9 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     changed = require('gulp-changed'),
     gulpNgConfig = require('gulp-ng-config'),
-    addStream = require('add-stream');
+    addStream = require('add-stream'),
     //es = require('event-stream');
-    //angularTemplateCache = require('gulp-angular-templatecache'),
+    angularTemplateCache = require('gulp-angular-templatecache');
     //rename = require('gulp-rename'),
     //livereload = require('gulp-livereload'),
 
@@ -102,7 +102,6 @@ gulp.task('build-vendor-scripts', ['clean-app'], function () {
     'public/_vendor/angular-sanitize/angular-sanitize.js',
     'public/_vendor/ngmap/build/scripts/ng-map.js'
   ])
-    //.pipe(concat('vendor.min.js'))
     .pipe(gulp.dest(paths.app.vendor));
 });
 
@@ -157,8 +156,7 @@ gulp.task('dist-styles', ['clean-dist'], function () {
 gulp.task('dist-scripts', ['clean-dist'], function () {
   return gulp.src('public/components/app/app.js')
     .pipe(addStream.obj(generateConfig('production')))
-    // todo [#6]: implement
-    //.pipe(addStream.obj(prepareTemplates()))
+    .pipe(addStream.obj(prepareTemplates()))
     .pipe(addStream.obj(gulp.src(['public/components/**/*.js', '!public/components/**/*Spec.js', '!public/components/app/app.js'])))
     .pipe(concat('app.min.js'))
     .pipe(uglify())
@@ -183,7 +181,7 @@ gulp.task('dist-images', ['clean-dist'], function () {
 
 // todo [#6]: migrate
 gulp.task('dist-templates', ['clean-dist'], function () {
-  return gulp.src('public/components/**/*.html')
+  return gulp.src(['public/components/**/*.html', '!public/components/**/*.tpl.html'])
     .pipe(gulp.dest('dist/components'));
 });
 
@@ -194,11 +192,10 @@ gulp.task('clean-dist', function (cb) {
 /**
  HELPERS
  */
-/*function prepareTemplates () {
-  return gulp.src('public/!**!/!*.html')
-    //.pipe(minify and preprocess the template html here)
+function prepareTemplates () {
+  return gulp.src('public/**/*.tpl.html')
     .pipe(angularTemplateCache());
-}*/
+}
 
 /**
  *

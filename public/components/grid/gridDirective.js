@@ -14,6 +14,6 @@ angular.module('uc')
       scope: {
         items: '='
       },
-      templateUrl: '/components/grid/grid.html'
+      templateUrl: 'components/grid/grid.tpl.html'
     };
   });
