@@ -9,10 +9,10 @@
  * */
 angular
   .module('uc')
-  .controller('GridCtrl', [
+  .controller('CoffeePointsCtrl', [
     '$scope',
     'points',
     function ($scope, points) {
-      $scope.items = points;
+      $scope.points = points;
     }
   ]);
