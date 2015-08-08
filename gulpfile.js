@@ -31,7 +31,20 @@ var paths = {
     styles: 'public/components/**/*.scss',
     appjs: 'public/components/app/app.js',
     js: ['public/components/**/*.js', '!public/components/**/*Spec.js', '!public/components/app/app.js'],
-    templates: 'public/components/**/*.html',
+    vendorjs: [
+      'public/_vendor/angular/angular.js',
+      'public/_vendor/angular-route/angular-route.js',
+      'public/_vendor/angular-sanitize/angular-sanitize.js',
+      'public/_vendor/ngmap/build/scripts/ng-map.js'
+    ],
+    vendorminjs: [
+      'public/_vendor/angular/angular.min.js',
+      'public/_vendor/angular-route/angular-route.min.js',
+      'public/_vendor/angular-sanitize/angular-sanitize.min.js',
+      'public/_vendor/ngmap/build/scripts/ng-map.min.js'
+    ],
+    templates: 'public/**/*.tpl.html',
+    partials: ['public/**/*.html', '!public/**/*.tpl.html'],
     images: 'public/images/**/*'
   },
   app: {
@@ -41,7 +54,11 @@ var paths = {
     images: 'app/images',
     vendor: 'app/_vendor'
   },
-  dist: {}
+  dist: {
+    root: 'dist/',
+    components: 'dist/components',
+    images: 'dist/images'
+  }
 };
 
 var isWatching = false;
@@ -63,7 +80,7 @@ gulp.task('watch', ['build'], function () {
 /**
  * TASK: BUILD
  */
-gulp.task('build', ['build-index', 'build-styles', 'build-appjs', 'build-scripts', 'build-vendor-scripts', 'build-images', 'build-templates'], function () {
+gulp.task('build', ['build-index', 'build-styles', 'build-appjs', 'build-scripts', 'build-vendor-scripts', 'build-images', 'build-templates', 'build-partials'], function () {
   // todo: put a notification here.
 });
 
@@ -96,12 +113,7 @@ gulp.task('build-scripts', ['clean-app'], function () {
 });
 
 gulp.task('build-vendor-scripts', ['clean-app'], function () {
-  return gulp.src([
-    'public/_vendor/angular/angular.js',
-    'public/_vendor/angular-route/angular-route.js',
-    'public/_vendor/angular-sanitize/angular-sanitize.js',
-    'public/_vendor/ngmap/build/scripts/ng-map.js'
-  ])
+  return gulp.src(paths.src.vendorjs)
     .pipe(gulp.dest(paths.app.vendor));
 });
 
@@ -112,7 +124,12 @@ gulp.task('build-images', ['clean-app'], function () {
 
 gulp.task('build-templates', ['clean-app'], function () {
   return gulp.src(paths.src.templates)
-    .pipe(gulp.dest(paths.app.components));
+    .pipe(gulp.dest(paths.app.root));
+});
+
+gulp.task('build-partials', ['clean-app'], function () {
+  return gulp.src(paths.src.partials)
+    .pipe(gulp.dest(paths.app.root));
 });
 
 gulp.task('clean-app', function (cb) {
@@ -127,12 +144,12 @@ gulp.task('clean-app', function (cb) {
  * TASK: DIST
  */
 
-gulp.task('dist', ['dist-index.html', 'dist-styles', 'dist-scripts', 'dist-vendor-scripts', 'dist-images', 'dist-templates'], function () {
+gulp.task('dist', ['dist-index.html', 'dist-styles', 'dist-scripts', 'dist-vendor-scripts', 'dist-images', 'dist-partials'], function () {
   // todo: put a notification here.
 });
 
 gulp.task('dist-index.html', ['clean-dist'], function () {
-  gulp.src('./views/index.jade')
+  gulp.src(paths.src.index)
     .pipe(jade({
       pretty: true
     }))
@@ -141,48 +158,43 @@ gulp.task('dist-index.html', ['clean-dist'], function () {
       scripts: 'app.min.js',
       vendorscripts: 'vendor.min.js'
     }))
-    .pipe(gulp.dest('./dist/'))
+    .pipe(gulp.dest(paths.dist.root))
 });
 
 gulp.task('dist-styles', ['clean-dist'], function () {
   //noinspection JSUnresolvedFunction
-  return sass('public/components/', { style: 'expanded' })
+  return sass(paths.src.components, { style: 'expanded' })
     .pipe(autoprefixer('last 2 version'))
     .pipe(concat('styles.min.css'))
     .pipe(minifycss())
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest(paths.dist.root));
 });
 
 gulp.task('dist-scripts', ['clean-dist'], function () {
-  return gulp.src('public/components/app/app.js')
+  return gulp.src(paths.src.appjs)
     .pipe(addStream.obj(generateConfig('production')))
     .pipe(addStream.obj(prepareTemplates()))
-    .pipe(addStream.obj(gulp.src(['public/components/**/*.js', '!public/components/**/*Spec.js', '!public/components/app/app.js'])))
+    .pipe(addStream.obj(gulp.src(paths.src.js)))
     .pipe(concat('app.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest(paths.dist.root));
 });
 
 gulp.task('dist-vendor-scripts', ['clean-dist'], function () {
-  return gulp.src([
-      'public/_vendor/angular/angular.min.js',
-      'public/_vendor/angular-route/angular-route.min.js',
-      'public/_vendor/angular-sanitize/angular-sanitize.min.js',
-      'public/_vendor/ngmap/build/scripts/ng-map.min.js'
-    ])
+  return gulp.src(paths.src.vendorminjs)
     .pipe(concat('vendor.min.js'))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest(paths.dist.root));
 });
 
 gulp.task('dist-images', ['clean-dist'], function () {
-  return gulp.src('public/images/**/*')
-    .pipe(gulp.dest('dist/images'));
+  return gulp.src(paths.src.images)
+    .pipe(gulp.dest(paths.dist.images));
 });
 
 // todo [#6]: migrate
-gulp.task('dist-templates', ['clean-dist'], function () {
-  return gulp.src(['public/components/**/*.html', '!public/components/**/*.tpl.html'])
-    .pipe(gulp.dest('dist/components'));
+gulp.task('dist-partials', ['clean-dist'], function () {
+  return gulp.src(paths.src.partials)
+    .pipe(gulp.dest(paths.dist.components));
 });
 
 gulp.task('clean-dist', function (cb) {
@@ -193,7 +205,7 @@ gulp.task('clean-dist', function (cb) {
  HELPERS
  */
 function prepareTemplates () {
-  return gulp.src('public/**/*.tpl.html')
+  return gulp.src(paths.src.templates)
     .pipe(angularTemplateCache());
 }
 
