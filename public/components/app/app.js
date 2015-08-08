@@ -21,6 +21,10 @@ angular
     $locationProvider.html5Mode({enabled: true, requireBase: false});
 
     $compileProvider.debugInfoEnabled(config.debug);
+  }])
+
+  .run(['geolocation', function (geolocation) {
+    geolocation.init();
   }]);
 
 // needed for templateCache
