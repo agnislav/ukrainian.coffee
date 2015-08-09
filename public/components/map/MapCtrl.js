@@ -8,16 +8,30 @@
  * @requires $scope
  * */
 angular.module('uc')
-  .controller('MapCtrl', ['$scope', '$compile', 'points', function ($scope, $compile, points) {
+  .controller('MapCtrl', ['$scope', '$compile', 'points', 'geolocation', function ($scope, $compile, points, geolocation) {
     $scope.items = points;
+    $scope.currentCoordinates = geolocation.coordinates;
     $scope.map = null;
     $scope.pointMarkers = [];
+    $scope.markerCurrentPosition = new google.maps.Marker({icon: '/images/marker-current-location.png'});
     var infowindow = new google.maps.InfoWindow();
 
     $scope.$on('mapInitialized', function(event, evtMap) {
       var pointIds = Object.keys(points);
       window.map = evtMap;
       $scope.map = map;
+
+      if ($scope.currentCoordinates && $scope.currentCoordinates.latitude && $scope.currentCoordinates.longitude) {
+        $scope.markerCurrentPosition.setPosition({lat: $scope.currentCoordinates.latitude, lng: $scope.currentCoordinates.longitude});
+        $scope.markerCurrentPosition.setMap($scope.map);
+      }
+      else {
+        $scope.$watch('currentCoordinates', function (newValue) {
+          $scope.markerCurrentPosition.setPosition({lat: newValue.latitude, lng: newValue.longitude});
+          $scope.markerCurrentPosition.setMap($scope.map);
+        }, true);
+      }
+      
       for (var i = 0, l = pointIds.length; i < l; i++) {
         var pointId = pointIds[i];
         if (points.hasOwnProperty(pointId)) {

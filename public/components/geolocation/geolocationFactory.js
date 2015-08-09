@@ -1,6 +1,7 @@
 angular.module('uc')
   .factory('geolocation', function () {
-    var coordinates, lastUpdated;
+    var factory = {},
+        coordinates, lastUpdated;
 
     function init () {
       if (navigator.geolocation) {
@@ -13,8 +14,16 @@ angular.module('uc')
       lastUpdated = position.timestamp;
     }
 
-    return {
-      init: init,
-      coordinates: coordinates
+
+    factory = {
+      init: init
     };
+
+    Object.defineProperty(factory, 'coordinates', {
+      get: function () {
+        return coordinates;
+      }
+    });
+
+    return factory;
   });
