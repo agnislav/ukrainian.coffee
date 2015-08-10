@@ -17,10 +17,16 @@ angular.module('uc')
     var infowindow = new google.maps.InfoWindow();
 
     $scope.$on('mapInitialized', function(event, evtMap) {
-      var pointIds = Object.keys(points);
       window.map = evtMap;
       $scope.map = map;
 
+      initCurrentLocation();
+
+      fillMarkers(map);
+
+    });
+
+    function initCurrentLocation () {
       if ($scope.currentCoordinates && $scope.currentCoordinates.latitude && $scope.currentCoordinates.longitude) {
         $scope.markerCurrentPosition.setPosition({lat: $scope.currentCoordinates.latitude, lng: $scope.currentCoordinates.longitude});
         $scope.markerCurrentPosition.setMap($scope.map);
@@ -31,7 +37,11 @@ angular.module('uc')
           $scope.markerCurrentPosition.setMap($scope.map);
         }, true);
       }
-      
+    }
+
+    function fillMarkers (map) {
+      var pointIds = Object.keys(points);
+
       for (var i = 0, l = pointIds.length; i < l; i++) {
         var pointId = pointIds[i];
         if (points.hasOwnProperty(pointId)) {
@@ -39,7 +49,7 @@ angular.module('uc')
           point.position = new google.maps.LatLng(point.location.lat, point.location.lng);
           var marker = new google.maps.Marker(point);
 
-         marker.setMap(map);
+          marker.setMap(map);
 
           google.maps.event.addListener(marker, 'click', function() {
             infowindow.setContent(prepareMarkerInfo(this));
@@ -51,10 +61,9 @@ angular.module('uc')
       }
 
       google.maps.event.addListener(map, 'click', function() {
-        infowindow.close(map, this);
+        infowindow.close($scope.map, this);
       });
-
-    });
+    }
 
     function prepareMarkerInfo (point) {
       //noinspection UnnecessaryLocalVariableJS
