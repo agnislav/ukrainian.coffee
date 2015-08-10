@@ -1,7 +1,7 @@
 angular.module('uc')
   .factory('geolocation', function () {
     var factory = {},
-        coordinates, lastUpdated;
+        coordinates = {}, lastUpdated;
 
     function init () {
       if (navigator.geolocation) {
@@ -10,7 +10,8 @@ angular.module('uc')
     }
 
     function _saveCoordinates (position) {
-      coordinates = position.coords;
+      //coordinates = position.coords;
+      angular.extend(coordinates, position.coordinates);
       lastUpdated = position.timestamp;
     }
 

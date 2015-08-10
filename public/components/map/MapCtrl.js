@@ -12,6 +12,7 @@ angular.module('uc')
     $scope.items = points;
     $scope.currentCoordinates = geolocation.coordinates;
     $scope.map = null;
+    $scope.mapAutoPositioned = false;
     $scope.pointMarkers = [];
     $scope.markerCurrentPosition = new google.maps.Marker({icon: '/images/marker-current-location.png'});
     var infowindow = new google.maps.InfoWindow();
@@ -21,31 +22,39 @@ angular.module('uc')
       $scope.map = map;
 
       initCurrentLocation();
-
       fillMarkers(map);
-
     });
 
     function initCurrentLocation () {
-      if ($scope.currentCoordinates && $scope.currentCoordinates.latitude && $scope.currentCoordinates.longitude) {
-        $scope.markerCurrentPosition.setPosition({lat: $scope.currentCoordinates.latitude, lng: $scope.currentCoordinates.longitude});
+      function _setMarker (coordinates) {
+        $scope.markerCurrentPosition.setPosition({lat: coordinates.latitude, lng: coordinates.longitude});
         $scope.markerCurrentPosition.setMap($scope.map);
+      }
+
+      if ($scope.currentCoordinates && $scope.currentCoordinates.latitude && $scope.currentCoordinates.longitude) {
+        _setMarker($scope.currentCoordinates);
       }
       else {
         $scope.$watch('currentCoordinates', function (newValue) {
-          $scope.markerCurrentPosition.setPosition({lat: newValue.latitude, lng: newValue.longitude});
-          $scope.markerCurrentPosition.setMap($scope.map);
-        }, true);
+          if (newValue && newValue.latitude && newValue.longitude) {
+            _setMarker(newValue);
+
+            if (!$scope.mapAutoPositioned) {
+              $scope.map.setCenter({lat: newValue.latitude, lng: newValue.longitude});
+              $scope.mapAutoPositioned = true;
+            }
+          }
+        }/*, true*/);
       }
     }
 
     function fillMarkers (map) {
-      var pointIds = Object.keys(points);
+      var pointIds = Object.keys($scope.items);
 
       for (var i = 0, l = pointIds.length; i < l; i++) {
         var pointId = pointIds[i];
-        if (points.hasOwnProperty(pointId)) {
-          var point = points[pointId];
+        if ($scope.items.hasOwnProperty(pointId)) {
+          var point = $scope.items[pointId];
           point.position = new google.maps.LatLng(point.location.lat, point.location.lng);
           var marker = new google.maps.Marker(point);
 
