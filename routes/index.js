@@ -4,7 +4,7 @@ var router = express.Router();
 /* GET home page. */
 var handler = function (req, res) {
   //res.render('index');
-  res.sendFile('/app/index.html');
+  res.sendFile('/app/index.html', {root: __dirname + '/..'});
 };
 
 router.get('/', handler);
