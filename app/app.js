@@ -9,13 +9,13 @@ angular
   .config(['$routeProvider', '$locationProvider', '$compileProvider', 'config', function ($routeProvider, $locationProvider, $compileProvider, config) {
 
     $routeProvider
-      .when('/', {templateUrl: '/components/coffeepoints/coffeepoints.html', controller: 'CoffeePointsCtrl'})
+      .when('/', {templateUrl: '/pages/coffeepoints/coffeepoints.html', controller: 'CoffeePointsCtrl'})
       //.when('/beans', {templateUrl: '/components/grid/grid.html', controller: 'GridCtrl', resolve: {type: 'bean'}})
       //.when('/roasters', {templateUrl: '/components/grid/grid.html', controller: 'GridCtrl', resolve: {type: 'roaster'}})
       //.when('/roasters/:id', {templateUrl: 'roaster.html', controller: 'RoasterCtrl'})
       //.when('/roasters/:id/:bean', {templateUrl: 'bean.html', controller: 'BeanCtrl'})
       //.when('/coffeepoints/:id', {templateUrl: 'point.html', controller: 'PointCtrl'})
-      .when('/map', {templateUrl: '/components/map/map.html', controller: 'MapCtrl'})
+      .when('/map', {templateUrl: '/pages/map/map.html', controller: 'MapCtrl'})
       .otherwise({redirectTo: '/ukrainian.coffee'});
 
     $locationProvider.html5Mode({enabled: true, requireBase: false});

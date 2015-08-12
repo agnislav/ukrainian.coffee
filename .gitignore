@@ -24,11 +24,10 @@
 # .idea/mongoSettings.xml
 
 node_modules
+bower_components
 .sass-cache
 
-/app
-dist
+build
 
 *.map
-public/_vendor
-public/components/**/*.css
+app/components/**/*.css

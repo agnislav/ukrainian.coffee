@@ -18,46 +18,45 @@ var gulp = require('gulp'),
     changed = require('gulp-changed'),
     gulpNgConfig = require('gulp-ng-config'),
     addStream = require('add-stream'),
-    //es = require('event-stream');
     angularTemplateCache = require('gulp-angular-templatecache');
     //rename = require('gulp-rename'),
     //livereload = require('gulp-livereload'),
 
 var paths = {
   src: {
-    views: 'views/*',
-    index: 'views/index.jade',
-    components: 'public/components',
-    styles: 'public/components/**/*.scss',
-    appjs: 'public/components/app/app.js',
-    js: ['public/components/**/*.js', '!public/components/**/*Spec.js', '!public/components/app/app.js'],
+    root: 'app',
+    index: 'app/index.html',
+    //components: 'app/components',
+    //styles: 'app/**/*.scss',
+    appjs: 'app/app.js',
+    js: ['app/**/*.js', '!app/**/*Spec.js', '!app/app.js'],
     vendorjs: [
-      'public/_vendor/angular/angular.js',
-      'public/_vendor/angular-route/angular-route.js',
-      'public/_vendor/angular-sanitize/angular-sanitize.js',
-      'public/_vendor/ngmap/build/scripts/ng-map.js'
+      'bower_components/angular/angular.js',
+      'bower_components/angular-route/angular-route.js',
+      'bower_components/angular-sanitize/angular-sanitize.js',
+      'bower_components/ngmap/build/scripts/ng-map.js'
     ],
     vendorminjs: [
-      'public/_vendor/angular/angular.min.js',
-      'public/_vendor/angular-route/angular-route.min.js',
-      'public/_vendor/angular-sanitize/angular-sanitize.min.js',
-      'public/_vendor/ngmap/build/scripts/ng-map.min.js'
+      'bower_components/angular/angular.min.js',
+      'bower_components/angular-route/angular-route.min.js',
+      'bower_components/angular-sanitize/angular-sanitize.min.js',
+      'bower_components/ngmap/build/scripts/ng-map.min.js'
     ],
-    templates: 'public/**/*.tpl.html',
-    partials: ['public/**/*.html', '!public/**/*.tpl.html'],
-    images: 'public/images/**/*'
+    templates: 'app/**/*.tpl.html',
+    partials: ['app/**/*.html', '!app/**/*.tpl.html', '!app/index.html'],
+    images: 'app/images/**/*'
   },
   app: {
-    root: 'app/',
-    appjs: 'app/app.js',
-    components: 'app/components',
-    images: 'app/images',
-    vendor: 'app/_vendor'
+    root: 'build/app/',
+    appjs: 'app.js',
+    //components: 'build/app/components',
+    images: 'build/app/images',
+    vendor: 'build/app/_vendor'
   },
   dist: {
-    root: 'dist/',
-    components: 'dist/components',
-    images: 'dist/images'
+    root: 'build/dist/',
+    //components: 'build/dist/components',
+    images: 'build/dist/images'
   }
 };
 
@@ -69,7 +68,7 @@ var isWatching = false;
 gulp.task('watch', ['build'], function () {
   isWatching = true;
 
-  gulp.watch(paths.src.views, ['build-index']);
+  gulp.watch(paths.src.index, ['build-index']);
   gulp.watch(paths.src.js, ['build-scripts']);
   gulp.watch(paths.src.styles, ['build-styles']);
   gulp.watch(paths.src.partials, ['build-partials']);
@@ -98,13 +97,11 @@ gulp.task('dist', ['dist-index.html', 'dist-styles', 'dist-scripts', 'dist-vendo
  */
 gulp.task('build-index', ['pre-build-clean'], function () {
   gulp.src(paths.src.index)
-    .pipe(jade({ pretty: true}))
     .pipe(gulp.dest(paths.app.root))
 });
 
 gulp.task('dist-index.html', ['pre-dist-clean'], function () {
   gulp.src(paths.src.index)
-    .pipe(jade({ pretty: true}))
     .pipe(htmlreplace({
       styles: 'styles.min.css',
       scripts: 'app.min.js',
@@ -117,18 +114,18 @@ gulp.task('dist-index.html', ['pre-dist-clean'], function () {
  * TASK: GENERATE CSS
  */
 gulp.task('build-styles', ['pre-build-clean'], function () {
-  return sass(paths.src.components, { style: 'expanded' , sourcemap: true})
+  return sass(paths.src.root, { style: 'expanded' , sourcemap: true})
     .on('error', function (err) {
       console.error('Error!', err.message);
     })
     .pipe(autoprefixer('last 2 version'))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest(paths.app.components));
+    .pipe(gulp.dest(paths.app.root));
 });
 
 gulp.task('dist-styles', ['pre-dist-clean'], function () {
   //noinspection JSUnresolvedFunction
-  return sass(paths.src.components, { style: 'expanded' })
+  return sass(paths.src.root, { style: 'expanded' })
     .pipe(autoprefixer('last 2 version'))
     .pipe(concat('styles.min.css'))
     .pipe(minifycss())
@@ -142,7 +139,7 @@ gulp.task('build-appjs', ['pre-build-clean'], function () {
   return gulp.src(paths.src.appjs)
     .pipe(addStream.obj(generateConfig('development')))
     .pipe(concat(paths.app.appjs))
-    .pipe(gulp.dest(paths.app.components));
+    .pipe(gulp.dest(paths.app.root));
 });
 
 
@@ -164,7 +161,7 @@ function generateConfig (env) {
  */
 gulp.task('build-scripts', ['pre-build-clean'], function () {
   return gulp.src(paths.src.js)
-    .pipe(gulp.dest(paths.app.components));
+    .pipe(gulp.dest(paths.app.root));
 });
 
 gulp.task('dist-scripts', ['pre-dist-clean'], function () {
@@ -228,7 +225,7 @@ gulp.task('build-partials', ['pre-build-clean'], function () {
 
 gulp.task('dist-partials', ['pre-dist-clean'], function () {
   return gulp.src(paths.src.partials)
-    .pipe(gulp.dest(paths.dist.components));
+    .pipe(gulp.dest(paths.dist.root));
 });
 
 /**
@@ -236,12 +233,12 @@ gulp.task('dist-partials', ['pre-dist-clean'], function () {
  */
 gulp.task('pre-build-clean', function (cb) {
   if (!isWatching) {
-    del(['app/*'], cb)
+    del(['build/app/*'], cb)
   }
   else cb();
 });
 
 gulp.task('pre-dist-clean', function (cb) {
-  del(['dist/*'], cb)
+  del(['build/dist/*'], cb)
 });
 
