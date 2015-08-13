@@ -130,6 +130,15 @@ angular
 
   .value('roasters', {
     cafeboutique: {
+      title: 'CafeBoutique',
+      description: '',
+      location: {
+        town: 'Київ',
+        district: 'Поділ',
+        address: 'вул. Хорива, 4',
+        lat: '50.464492',
+        lng: '30.513288'
+      },
       coffee: {
         'brazil-peaberry-pearl': {
           title: 'Brazil Peaberry Pearl',
@@ -157,6 +166,15 @@ angular
       }
     },
     'espresso-kimnata': {
+      title: 'Еспресо-кімната',
+      description: '',
+      location: {
+        town: 'Київ',
+        district: 'Хрещатик',
+        address: 'вул. Хрещатик, 40/1',
+        lat: '50.444665',
+        lng: '30.520671'
+      },
       coffee: {
         'honduras': {
           title: 'Honduras'
@@ -165,14 +183,20 @@ angular
     },
     'chashka': {
       title: 'Чашка',
-      town: 'Київ',
+      location: {
+        town: 'Київ'
+      },
       coffee: {}
 
     },
     'funt-kofe': {
       title: 'Фунт Кофе',
-      town: 'Дніпропетровськ',
-      url: 'https://www.facebook.com/pages/Фунт-Кофе/209303262475013',
+      location: {
+        town: 'Дніпропетровськ'
+      },
+      contacts: {
+        url: 'https://www.facebook.com/pages/Фунт-Кофе/209303262475013'
+      },
       coffee: {
         'honduras': {
           title: 'Honduras'
@@ -181,10 +205,14 @@ angular
     },
     'tiko-chako': {
       title: 'Тіко-Чако',
-      town: 'Кам\'янець-Подільский',
-      tel: ['0969593474', '0979731847'],
+      location: {
+        town: 'Кам\'янець-Подільский'
+      },
+      contacts: {
+        tel: ['0969593474', '0979731847'],
+        url: 'https://www.tiko-chako.com/'
+      },
       logo: 'https://www.tiko-chako.com/images/2_0/logo_02_ru.png',
-      url: 'https://www.tiko-chako.com/',
       coffee: {
         'gotica': {
           title: 'Готика'

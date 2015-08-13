@@ -11,12 +11,12 @@ angular
     $routeProvider
       .when('/', {templateUrl: '/pages/coffeepoints/coffeepoints.html', controller: 'CoffeePointsCtrl'})
       //.when('/beans', {templateUrl: '/components/grid/grid.html', controller: 'GridCtrl', resolve: {type: 'bean'}})
-      //.when('/roasters', {templateUrl: '/components/grid/grid.html', controller: 'GridCtrl', resolve: {type: 'roaster'}})
+      .when('/roasters', {templateUrl: '/pages/roasters/roasters.html', controller: 'RoastersCtrl'})
       //.when('/roasters/:id', {templateUrl: 'roaster.html', controller: 'RoasterCtrl'})
       //.when('/roasters/:id/:bean', {templateUrl: 'bean.html', controller: 'BeanCtrl'})
       //.when('/coffeepoints/:id', {templateUrl: 'point.html', controller: 'PointCtrl'})
       .when('/map', {templateUrl: '/pages/map/map.html', controller: 'MapCtrl'})
-      .otherwise({redirectTo: '/ukrainian.coffee'});
+      .otherwise({redirectTo: '/'});
 
     $locationProvider.html5Mode({enabled: true, requireBase: false});
 

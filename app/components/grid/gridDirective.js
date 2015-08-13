@@ -12,8 +12,12 @@ angular.module('uc')
     return {
       restrict: 'E',
       scope: {
-        items: '='
+        items: '=',
+        itemTemplate: '@'
       },
-      templateUrl: 'components/grid/grid.tpl.html'
+      templateUrl: 'components/grid/grid.tpl.html',
+      link: function (scope) {
+        //console.log(scope.itemTemplate);
+      }
     };
   });

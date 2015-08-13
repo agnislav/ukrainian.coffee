@@ -12,12 +12,15 @@ angular.module('uc').directive('item', function () {
   return {
     restrict: 'E',
     scope: {
-      item: '='
+      item: '=',
+      template: '='
     },
-    templateUrl: 'components/grid/item/item.tpl.html'
-    //template: '<div ng-include="getTemplateUrl()"></div>',
-    //link: function (scope) {
-    //  scope.getTemplateUrl = function () {return '/components/grid/item/item-' + scope.item.type + '.html';}
-    //}
+    //templateUrl: 'components/grid/item/item-coffeepoint.tpl.html'
+    template: '<div ng-include="getTemplateUrl()"></div>',
+    link: function (scope) {
+      scope.getTemplateUrl = function () {
+        return '/components/grid/item/item-' + scope.template + '.tpl.html';
+      }
+    }
   }
 });
