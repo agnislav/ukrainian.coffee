@@ -125,6 +125,81 @@ angular
       roasters: {
         'chashka': true
       }
+    },
+
+    'city-zen': {
+      title: 'City Zen',
+      description: 'Кав\'ярня',
+      location: {
+        town: 'Київ',
+        district: 'Цирк',
+        address: 'проспект Перемоги, 3а',
+        lat: '50.447130',
+        lng: '30.488437'
+      },
+      chain: false,
+      sell: true,
+      verified: true,
+      roasters: {
+        'city-zen': true
+      }
+    },
+
+    'homecafe': {
+      title: 'Home Cafe',
+      description: 'Кав\'ярня',
+      location: {
+        town: 'Київ',
+        district: 'Цирк',
+        address: 'вул. Бульварно-Кудрявська, 32',
+        lat: '50.450243',
+        lng: '30.495654'
+      },
+      chain: false,
+      sell: true,
+      verified: true,
+      roasters: {
+
+      }
+    },
+
+    '1900': {
+      title: '1900',
+      description: 'Кав\'ярня',
+      location: {
+        town: 'Київ',
+        district: 'Цирк',
+        address: 'вул. Саксаганського, 112а',
+        lat: '50.444623',
+        lng: '30.496523'
+      },
+      chain: false,
+      sell: false,
+      verified: true,
+      roasters: {
+
+      }
+    },
+
+    'filizhanochka': {
+      title: 'Філіжаночка',
+      description: 'Кав\'ярня',
+      location: {
+        town: 'Київ',
+        district: 'Львівська площа',
+        address: 'вул. Січових Стрільців, 35/1',
+        lat: '50.456132',
+        lng: '30.497706'
+      },
+      chain: false,
+      sell: false,
+      verified: true,
+      roasters: {
+        'gemini': {
+          brew: true,
+          sell: false
+        }
+      }
     }
   })
 
